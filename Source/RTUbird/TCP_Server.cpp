@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "TCP_Server.h"
 #include "Networking/Public/Networking.h"
 
-#include "TCP_Server.h"
 
 // Sets default values
 UTCP_Server::UTCP_Server()
