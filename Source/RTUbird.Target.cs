@@ -18,6 +18,7 @@ public class RTUbirdTarget : TargetRules
 			"InputCore",
 			"Networking",
 			"Sockets",
-			"QRcode"} );
+			"QRcode"} 
+		);
 	}
 }

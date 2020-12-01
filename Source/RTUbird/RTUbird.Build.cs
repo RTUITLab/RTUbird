@@ -15,8 +15,9 @@ public class RTUbird : ModuleRules
 			"Engine",
 			"InputCore",
 			"Sockets",
-			"Networking" });
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+			"Networking",
+			"QRcode" });
+		PrivateDependencyModuleNames.AddRange(new string[] {});
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
