@@ -4,7 +4,7 @@ var id_ue = "";
 var id_cl0 = "";
 var id_cl1 = "";
 var version = "1.0.1";
-var tocen = 0;
+var token = 0;
 io.sockets.on('connection', function (socket) { //обработчик входящих подключений
 	socket.on('message', function (msg) { //обработчик входящих сообщений 
 		
@@ -28,13 +28,13 @@ io.sockets.on('connection', function (socket) { //обработчик вход�
 		}
 		if (ArrayOfData[0] == "4") { //пришел хэш-токен для последующей проверки клиента
 
-			tocen = Number(ArrayOfData[1]);
-			console.log("получен токеy" + " " + tocen);
+			token = Number(ArrayOfData[1]);
+			console.log("получен токен" + " " + token);
 		}
 		else if (ArrayOfData[0] == "5") { //хэш-токен от клиента пришел на проверку
 			ArrayOfData[1] = ArrayOfData[1].replace(/^#/, '');
 			console.log("хэш на проверку пришел" + " " + ArrayOfData[1]);
-			if (ArrayOfData[1] != String(tocen)) {
+			if (ArrayOfData[1] != String(token)) {
 				socket.send("dis");
 				console.log("хэш проверку не прошел");
 				io.sockets.connected[socket.id].disconnect();
@@ -68,7 +68,7 @@ io.sockets.on('connection', function (socket) { //обработчик вход�
 		if (ID == id_ue) {
 			console.log("отключение анрила" + " " + ID);
 			id_ue = "";
-			tocen = 0;
+			token = 0;
 		}
 		if (ID == id_cl0) {
 			console.log("отключение клиента 0" + " " + ID);
