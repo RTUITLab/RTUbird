@@ -13,6 +13,7 @@
 * Run server with `npm start` in `ServerJS`
 * Run `CyberBird.exe`
 * Run client with `node .\index.ts`
+> `messages.txt` contains decryption of web sockets messages.
 
 **Test application**
 In server logs find message `получен токен XXXX`. XXXX is a token of your game client. Open in browser `http://localhost:1081/#XXXX` **twice** and click _start_ on each page to start the game.
