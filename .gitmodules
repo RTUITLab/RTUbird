@@ -1,0 +1,6 @@
+[submodule "Plugins/QRCode"]
+	path = Plugins/QRCode
+	url = https://github.com/hzm/QRCode
+[submodule "Plugins/socketio-client-ue4"]
+	path = Plugins/socketio-client-ue4
+	url = https://github.com/getnamo/socketio-client-ue4
