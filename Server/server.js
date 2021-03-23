@@ -1,5 +1,8 @@
-var io = require('socket.io').listen(1080);
-console.log(io);
+require('dotenv').config();
+var io = require('socket.io').listen(process.env.WS_PORT);
+
+console.log(`Server is started at port ${process.env.WS_PORT}`);
+
 io.set('log level', 1);
 var id_ue = "";
 var id_cl0 = "";
@@ -10,7 +13,9 @@ var token = 0;
 io.sockets.on('connection', function (socket) { //обработчик входящих подключений
 	socket.on('message', function (msg) { //обработчик входящих сообщений 
 		
-		console.log("DEBUG: " + msg);
+		if (process.env.NODE_ENV === 'development')
+			console.log("DEBUG: " + msg);
+		
 		var ArrayOfData = msg.split(";");
 		if (ArrayOfData[0] === "X") { //сообщение анрил подключился
 			let ID = (socket.id).toString();
