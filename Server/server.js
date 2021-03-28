@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const server = require('http').createServer();
 const io = require('socket.io')(server, {
+	path: "/server",
 	serveClient: false
 });
 

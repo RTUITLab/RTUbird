@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 function App() {
   // const [token, setToken] = useState('');
   const [comment, setComment] = useState('Ждем подключения второго игрока…');
-  const [wsClient] = useState(io.connect(process.env.REACT_APP_URL!));
+  const [wsClient] = useState(io.connect(process.env.REACT_APP_URL!, { path: "/server" }));
   const [clientId, setClientId] = useState(-1);
   const [playersReady, setReady] = useState(false);
   const [started, start] = useState(false);

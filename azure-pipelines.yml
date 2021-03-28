@@ -13,3 +13,5 @@ stages:
       artifact: web-client-build
     - publish: Server/deploy
       artifact: server-build
+    - publish: Proxy
+      artifact: proxy-build

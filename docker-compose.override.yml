@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  server:
+    build: Server/deploy
+    ports:
+      - 1080:1080
+  client:
+    build: WebClient/deploy
+    ports:
+      - 1081:1081
+  proxy:
+    build: Proxy
+    ports:
+      - 1070:1070

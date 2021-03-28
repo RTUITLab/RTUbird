@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  server:
+    image: rtuitlab/screen-cyberbird-server
+  client:
+    image: rtuitlab/screen-cyberbird-client
+  proxy:
+    image: rtuitlab/screen-cyberbird-proxy
