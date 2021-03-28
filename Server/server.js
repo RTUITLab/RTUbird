@@ -1,16 +1,20 @@
 require('dotenv').config();
-var io = require('socket.io').listen(process.env.WS_PORT);
 
-console.log(`Server is started at port ${process.env.WS_PORT}`);
+const server = require('http').createServer();
+const io = require('socket.io')(server, {
+	serveClient: false
+});
 
-io.set('log level', 1);
+const port = process.env.WS_PORT || 1080;
+server.listen(port, () => console.log('server listening on port ' + port));
+
 var id_ue = "";
 var id_cl0 = "";
 var id_cl1 = "";
 let ready = { cl1: false, cl2: false }
 var version = "1.0.1";
 var token = 0;
-io.sockets.on('connection', function (socket) { //обработчик входящих подключений
+io.on('connect', function (socket) { //обработчик входящих подключений
 	socket.on('message', function (msg) { //обработчик входящих сообщений 
 		
 		if (process.env.NODE_ENV === 'development')
