@@ -44,13 +44,13 @@ stages:
       matrix:
         web-client:
           imageName: ${{variables.webClient_imageName}}
-          artifactName: ${{ webClient_artifactName }}
+          artifactName: ${{ variables.webClient_artifactName }}
         server:
           imageName: ${{variables.server_imageName}}
-          artifactName: ${{ server_artifactName }}
+          artifactName: ${{ variables.server_artifactName }}
         proxy:
           imageName: ${{variables.proxy_imageName}}
-          artifactName: ${{ proxy_artifactName }}
+          artifactName: ${{ variables.proxy_artifactName }}
     steps:
     - download: current
       artifact: $(artifactName)
