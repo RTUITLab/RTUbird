@@ -12,14 +12,19 @@ variables:
   proxy_artifactName: proxy-build
   ${{ if notIn(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/ci') }}:
     buildImage: false
-    # deployService: false
-    # deployEnvironment: 'no'
+    deployService: false
+    deployEnvironment: 'no'
+    webClient_serviceName: 'no'
+    server_serviceName: 'no'
+    proxy_serviceName: 'no'
     imageTags: 'no'
-    # apiServiceName: 'no'
   ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/ci')) }}:
     buildImage: true
-    # deployService: true
-    # deployEnvironment: 'production'
+    deployService: true
+    deployEnvironment: 'production'
+    webClient_serviceName: cyberbird_client
+    server_serviceName: cyberbird_server
+    proxy_serviceName: cyberbird_proxy
     imageTags: |
       $(Build.BuildId)
       latest
@@ -63,3 +68,84 @@ stages:
         Dockerfile: '$(Pipeline.Workspace)/$(artifactName)/Dockerfile'
         buildContext: '$(Pipeline.Workspace)/$(artifactName)'
         tags: ${{variables.imageTags}}
+- stage: deploy
+  condition: and(succeeded(), ${{variables.deployService}})
+  jobs:
+    - deployment: DeployWebClient
+      displayName: Deploy web client
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: ${{variables.deployEnvironment}}
+      strategy:
+        runOnce:
+          on:
+            failure:
+              steps:
+                - download: none
+                - task: SSH@0
+                  inputs:
+                    sshEndpoint: 'swarm manager'
+                    runOptions: 'commands'
+                    commands: 'docker service rollback ${{variables.webClient_serviceName}}'
+                    readyTimeout: '20000'
+          deploy:
+            steps:
+              - download: none
+              - task: SSH@0
+                inputs:
+                  sshEndpoint: 'swarm manager'
+                  runOptions: 'commands'
+                  commands: 'docker service update --image ${{ variables.webClient_imageName }}:$(Build.BuildId) ${{variables.webClient_serviceName}}'
+                  readyTimeout: '20000'
+    - deployment: DeployServer
+      displayName: Deploy server
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: ${{variables.deployEnvironment}}
+      strategy:
+        runOnce:
+          on:
+            failure:
+              steps:
+                - download: none
+                - task: SSH@0
+                  inputs:
+                    sshEndpoint: 'swarm manager'
+                    runOptions: 'commands'
+                    commands: 'docker service rollback ${{variables.server_serviceName}}'
+                    readyTimeout: '20000'
+          deploy:
+            steps:
+              - download: none
+              - task: SSH@0
+                inputs:
+                  sshEndpoint: 'swarm manager'
+                  runOptions: 'commands'
+                  commands: 'docker service update --image ${{ variables.server_imageName }}:$(Build.BuildId) ${{variables.server_serviceName}}'
+                  readyTimeout: '20000'
+    - deployment: DeployProxy
+      displayName: Deploy proxy
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: ${{variables.deployEnvironment}}
+      strategy:
+        runOnce:
+          on:
+            failure:
+              steps:
+                - download: none
+                - task: SSH@0
+                  inputs:
+                    sshEndpoint: 'swarm manager'
+                    runOptions: 'commands'
+                    commands: 'docker service rollback ${{variables.proxy_serviceName}}'
+                    readyTimeout: '20000'
+          deploy:
+            steps:
+              - download: none
+              - task: SSH@0
+                inputs:
+                  sshEndpoint: 'swarm manager'
+                  runOptions: 'commands'
+                  commands: 'docker service update --image ${{ variables.proxy_imageName }}:$(Build.BuildId) ${{variables.proxy_serviceName}}'
+                  readyTimeout: '20000'
