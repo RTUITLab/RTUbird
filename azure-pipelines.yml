@@ -3,6 +3,27 @@ pool:
 
 name: $(BuildID)-$(Build.SourceBranchName)
 
+variables:
+  ${{ if notIn(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/ci') }}:
+    buildImage: false
+    # deployService: false
+    deployEnvironment: 'no'
+    imageTags: 'no'
+    # apiServiceName: 'no'
+  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/ci')) }}:
+    buildImage: true
+    # deployService: true
+    # deployEnvironment: 'production'
+    webClient_imageName: rtuitlab/screen-cyberbird-client
+    webClient_artifactName: web-client-build
+    server_imageName: rtuitlab/screen-cyberbird-server
+    server_artifactName: server-build
+    proxy_imageName: rtuitlab/screen-cyberbird-server
+    proxy_artifactName: proxy-build
+    imageTags: |
+      $(Build.BuildId)
+      latest
+
 stages:
 - stage: Build
   jobs:
@@ -10,8 +31,35 @@ stages:
     steps:
     - powershell: ./ci_build.ps1
     - publish: WebClient/deploy
-      artifact: web-client-build
+      artifact: ${{ variables.webClient_artifactName }}
     - publish: Server/deploy
-      artifact: server-build
+      artifact: ${{ variables.server_artifactName }}
     - publish: Proxy
-      artifact: proxy-build
+      artifact: ${{ variables.proxy_artifactName }}
+- stage: packServices
+  condition: and(succeeded(), ${{variables.buildImage}})
+  jobs:
+  - job: pack
+    strategy:
+      matrix:
+        web-client:
+          imageName: ${{variables.webClient_imageName}}
+          artifactName: ${{ webClient_artifactName }}
+        server:
+          imageName: ${{variables.server_imageName}}
+          artifactName: ${{ server_artifactName }}
+        proxy:
+          imageName: ${{variables.proxy_imageName}}
+          artifactName: ${{ proxy_artifactName }}
+    steps:
+    - download: current
+      artifact: $(artifactName)
+      displayName: download $(artifactName)
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'rtuitlab connection by admin'
+        repository: $(imageName)
+        command: 'buildAndPush'
+        Dockerfile: '$(Pipeline.Workspace)/$(artifactName)/Dockerfile'
+        buildContext: '$(Pipeline.Workspace)/$(artifactName)'
+        tags: ${{variables.imageTags}}
