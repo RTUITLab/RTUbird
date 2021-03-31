@@ -1,5 +1,7 @@
 # RTUBird
 
+[![Build Status](https://dev.azure.com/rtuitlab/RTU%20IT%20Lab/_apis/build/status/CyberBird?branchName=master)](https://dev.azure.com/rtuitlab/RTU%20IT%20Lab/_build/latest?definitionId=158&branchName=master)
+
 При сборке в релиз необходимо:
 1. Открыть файл E_GM в редакторе UnrealEngine
 2. В переменную BuldVersion внести значение текущей версии игры.
