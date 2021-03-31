@@ -18,7 +18,7 @@ variables:
     server_serviceName: 'no'
     proxy_serviceName: 'no'
     imageTags: 'no'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     buildImage: true
     deployService: true
     deployEnvironment: 'production'
