@@ -4,22 +4,22 @@ pool:
 name: $(BuildID)-$(Build.SourceBranchName)
 
 variables:
+  webClient_imageName: rtuitlab/screen-cyberbird-client
+  webClient_artifactName: web-client-build
+  server_imageName: rtuitlab/screen-cyberbird-server
+  server_artifactName: server-build
+  proxy_imageName: rtuitlab/screen-cyberbird-server
+  proxy_artifactName: proxy-build
   ${{ if notIn(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/ci') }}:
     buildImage: false
     # deployService: false
-    deployEnvironment: 'no'
+    # deployEnvironment: 'no'
     imageTags: 'no'
     # apiServiceName: 'no'
   ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/ci')) }}:
     buildImage: true
     # deployService: true
     # deployEnvironment: 'production'
-    webClient_imageName: rtuitlab/screen-cyberbird-client
-    webClient_artifactName: web-client-build
-    server_imageName: rtuitlab/screen-cyberbird-server
-    server_artifactName: server-build
-    proxy_imageName: rtuitlab/screen-cyberbird-server
-    proxy_artifactName: proxy-build
     imageTags: |
       $(Build.BuildId)
       latest
