@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  server:
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 70M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+  client:
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 40M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+  proxy:
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 40M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
