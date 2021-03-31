@@ -10,7 +10,7 @@ variables:
   server_artifactName: server-build
   proxy_imageName: rtuitlab/screen-cyberbird-proxy
   proxy_artifactName: proxy-build
-  ${{ if notIn(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/ci') }}:
+  ${{ if notIn(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     buildImage: false
     deployService: false
     deployEnvironment: 'no'
@@ -18,7 +18,7 @@ variables:
     server_serviceName: 'no'
     proxy_serviceName: 'no'
     imageTags: 'no'
-  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/ci')) }}:
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
     buildImage: true
     deployService: true
     deployEnvironment: 'production'
