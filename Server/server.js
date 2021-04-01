@@ -1,12 +1,21 @@
 require('dotenv').config();
+const cors = require('cors');
 
-const server = require('http').createServer();
+const server = require('http').createServer((req, res) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Request-Method', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+	res.setHeader('Access-Control-Allow-Headers', '*');
+	if ( req.method === 'OPTIONS' ) {
+		res.writeHead(200);
+		res.end();
+		return;
+	}
+});
 const io = require('socket.io')(server, {
 	path: "/server",
 	serveClient: false
 });
-
-server.use(cors())
 
 const port = process.env.WS_PORT || 1080;
 server.listen(port, () => console.log('server listening on port ' + port));
