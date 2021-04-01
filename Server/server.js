@@ -6,6 +6,8 @@ const io = require('socket.io')(server, {
 	serveClient: false
 });
 
+server.use(cors())
+
 const port = process.env.WS_PORT || 1080;
 server.listen(port, () => console.log('server listening on port ' + port));
 
