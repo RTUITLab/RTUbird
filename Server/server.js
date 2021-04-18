@@ -1,5 +1,4 @@
 require('dotenv').config();
-const cors = require('cors');
 
 const server = require('http').createServer((req, res) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +13,9 @@ const server = require('http').createServer((req, res) => {
 });
 const io = require('socket.io')(server, {
 	path: "/server",
-	serveClient: false
+	serveClient: false,
+	pingInterval: 25000,
+  	pingTimeout: 60000
 });
 
 const port = process.env.WS_PORT || 1080;
@@ -24,7 +25,7 @@ var id_ue = "";
 var id_cl0 = "";
 var id_cl1 = "";
 let ready = { cl1: false, cl2: false }
-var version = "1.0.1";
+var version = "0";
 var token = 0;
 io.on('connect', function (socket) { //обработчик входящих подключений
 	socket.on('message', function (msg) { //обработчик входящих сообщений 

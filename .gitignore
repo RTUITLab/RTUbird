@@ -78,8 +78,8 @@ ServerJS/node_modules
 ClientJs/node_modules
 Server/node_modules
 WebClient/node_modules
+GameServer/node_modules
 
+nginx-1.18.0
 
-OldClientJs
-ServerJS
 stack.yml
