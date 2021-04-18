@@ -4,99 +4,63 @@ pool:
 name: $(BuildID)-$(Build.SourceBranchName)
 
 variables:
-  webClient_imageName: rtuitlab/screen-cyberbird-client
-  webClient_artifactName: web-client-build
   server_imageName: rtuitlab/screen-cyberbird-server
   server_artifactName: server-build
-  proxy_imageName: rtuitlab/screen-cyberbird-proxy
-  proxy_artifactName: proxy-build
   ${{ if notIn(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     buildImage: false
     deployService: false
     deployEnvironment: 'no'
-    webClient_serviceName: 'no'
     server_serviceName: 'no'
-    proxy_serviceName: 'no'
     imageTags: 'no'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     buildImage: true
     deployService: true
     deployEnvironment: 'production'
-    webClient_serviceName: cyberbird_client
     server_serviceName: cyberbird_server
-    proxy_serviceName: cyberbird_proxy
     imageTags: |
       $(Build.BuildId)
       latest
 
 stages:
-- stage: Build
+- stage: Buildnode
   jobs:
-  - job: BuildAll
+  - job: Build
     steps:
-    - powershell: ./ci_build.ps1
-    - publish: WebClient/deploy
-      artifact: ${{ variables.webClient_artifactName }}
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '12.x'
+      displayName: 'Install Node.js'
+    - script: npm install -g jake
+      displayName: 'Install Jake.js'
+    - script: jake
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: 'WebClient/build'
+        Contents: '**'
+        TargetFolder: 'Server/deploy/static'
+        CleanTargetFolder: true
     - publish: Server/deploy
       artifact: ${{ variables.server_artifactName }}
-    - publish: Proxy
-      artifact: ${{ variables.proxy_artifactName }}
-- stage: packServices
+- stage: Push Docker Image
   condition: and(succeeded(), ${{variables.buildImage}})
   jobs:
-  - job: pack
-    strategy:
-      matrix:
-        web-client:
-          imageName: ${{variables.webClient_imageName}}
-          artifactName: ${{ variables.webClient_artifactName }}
-        server:
-          imageName: ${{variables.server_imageName}}
-          artifactName: ${{ variables.server_artifactName }}
-        proxy:
-          imageName: ${{variables.proxy_imageName}}
-          artifactName: ${{ variables.proxy_artifactName }}
+  - job: Build
+    displayName: Build
     steps:
     - download: current
-      artifact: $(artifactName)
-      displayName: download $(artifactName)
+      artifact: ${{ variables.server_artifactName }}
+      displayName: Download
     - task: Docker@2
       inputs:
         containerRegistry: 'rtuitlab connection by admin'
-        repository: $(imageName)
+        repository: ${{variables.server_imageName}}
         command: 'buildAndPush'
-        Dockerfile: '$(Pipeline.Workspace)/$(artifactName)/Dockerfile'
-        buildContext: '$(Pipeline.Workspace)/$(artifactName)'
+        Dockerfile: '$(Pipeline.Workspace)/${{ variables.server_artifactName }}/Dockerfile'
+        buildContext: '$(Pipeline.Workspace)/${{ variables.server_artifactName }}'
         tags: ${{variables.imageTags}}
 - stage: deploy
   condition: and(succeeded(), ${{variables.deployService}})
   jobs:
-    - deployment: DeployWebClient
-      displayName: Deploy web client
-      pool:
-        vmImage: 'ubuntu-latest'
-      environment: ${{variables.deployEnvironment}}
-      strategy:
-        runOnce:
-          on:
-            failure:
-              steps:
-                - download: none
-                - task: SSH@0
-                  inputs:
-                    sshEndpoint: 'swarm manager'
-                    runOptions: 'commands'
-                    commands: 'docker service rollback ${{variables.webClient_serviceName}}'
-                    readyTimeout: '20000'
-          deploy:
-            steps:
-              - download: none
-              - task: SSH@0
-                inputs:
-                  sshEndpoint: 'swarm manager'
-                  runOptions: 'commands'
-                  commands: 'docker service update --image ${{ variables.webClient_imageName }}:$(Build.BuildId) ${{variables.webClient_serviceName}}'
-                  readyTimeout: '20000'
     - deployment: DeployServer
       displayName: Deploy server
       pool:
@@ -122,30 +86,4 @@ stages:
                   sshEndpoint: 'swarm manager'
                   runOptions: 'commands'
                   commands: 'docker service update --image ${{ variables.server_imageName }}:$(Build.BuildId) ${{variables.server_serviceName}}'
-                  readyTimeout: '20000'
-    - deployment: DeployProxy
-      displayName: Deploy proxy
-      pool:
-        vmImage: 'ubuntu-latest'
-      environment: ${{variables.deployEnvironment}}
-      strategy:
-        runOnce:
-          on:
-            failure:
-              steps:
-                - download: none
-                - task: SSH@0
-                  inputs:
-                    sshEndpoint: 'swarm manager'
-                    runOptions: 'commands'
-                    commands: 'docker service rollback ${{variables.proxy_serviceName}}'
-                    readyTimeout: '20000'
-          deploy:
-            steps:
-              - download: none
-              - task: SSH@0
-                inputs:
-                  sshEndpoint: 'swarm manager'
-                  runOptions: 'commands'
-                  commands: 'docker service update --image ${{ variables.proxy_imageName }}:$(Build.BuildId) ${{variables.proxy_serviceName}}'
                   readyTimeout: '20000'
