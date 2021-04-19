@@ -1,5 +1,6 @@
 var io = require('socket.io').listen(1080);
 io.set('log level', 1);
+io.origins('*');
 var id_ue = "";
 var id_cl0 = "";
 var id_cl1 = "";

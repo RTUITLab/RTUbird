@@ -72,14 +72,3 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-
-# Node modules
-ServerJS/node_modules
-ClientJs/node_modules
-Server/node_modules
-WebClient/node_modules
-
-
-OldClientJs
-ServerJS
-stack.yml

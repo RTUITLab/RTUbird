@@ -16,7 +16,10 @@ public class RTUbird : ModuleRules
 			"InputCore",
 			"Sockets",
 			"Networking",
-			"QRcode" });
+			"QRcode",
+		"Json",
+		"JsonUtilities"
+		});
 		PrivateDependencyModuleNames.AddRange(new string[] {});
 
 		// Uncomment if you are using Slate UI

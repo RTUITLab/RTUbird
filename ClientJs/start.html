@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Cyber bird</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+
+	<div id="start" style="display:block;"><input type="button" value="START" onclick="StartClicked()">
+		<div>Ожидание подключения второго игрока...</div>
+	</div>
+
+	<div id="jump" style="display:none;"><input type="button" value="JUMP" onclick="JumpClicked()">
+		<div>Прыгай чтобы выиграть!</div>
+	</div>
+
+	<div id="retry" style="display:none;">Упс...Неудача!
+		<div>Не расстраивайся!
+			<div><input type="button" value="Начать заново" onclick="RetryClicked()">
+				<div>Игра окончена
+					<div>Счет
+						<div>Игрок 1 - <span id="spanPlayer1">
+						</div>
+						<div>Игрок 2 - <span id="spanPlayer2">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="error" style="display:none;"> Ваша ссылка недействительна, отсканируйте qr заново</div>
+	<script>
+		let content1 = document.getElementById("start");
+		let content2 = document.getElementById("jump");
+		let content3 = document.getElementById("retry");
+		let error = document.getElementById("error");
+		let span1 = document.getElementById("spanPlayer1");
+		let span2 = document.getElementById("spanPlayer2");
+		var socket = io.connect("https://cyberbird.screen.rtuitlab.dev/server");
+		if (window.location.hash) {
+			socket.send("5;" + String(window.location.hash));
+			error.style.display = "none";
+			content1.style.display = "block";
+			content2.style.display = "none";
+			content3.style.display = "none";
+		}
+		else {
+			error.style.display = "block";
+			content1.style.display = "none";
+			content2.style.display = "none";
+			content3.style.display = "none";
+			socket.disconnect();
+		}
+		socket.send("0");
+		var ClientId = -1;
+		socket.on('message', function (msg) {
+			if (msg == "dis") {
+				error.style.display = "block";
+				content1.style.display = "none";
+				content2.style.display = "none";
+				content3.style.display = "none";
+				socket.disconnect();
+			}
+			if (msg == "00") {
+				ClientId = 0;
+			}
+			if (msg == "01") {
+				ClientId = 1;
+			}
+			var ArrayOfData = msg.split(";");
+			if (msg == "3") {
+				content2.style.display = "block";
+				content1.style.display = "none";
+				content3.style.display = "none";
+			}
+			if (ArrayOfData[0] == "9") {
+				span1.innerHTML = ArrayOfData[1];
+				if (ArrayOfData.lenght == 3) {
+					span2.innerHTML = ArrayOfData[2];
+				}
+				else {
+					span2.innerHTML = 0;
+				}
+
+				content3.style.display = "block";
+				content2.style.display = "none";
+			}
+		});
+		function StartClicked() {
+			socket.send("3");
+			content2.style.display = "block";
+			content1.style.display = "none";
+		};
+		function JumpClicked() {
+			if (ClientId == 0) {
+				socket.send("1;0");
+			}
+			if (ClientId == 1) {
+				socket.send("1;1");
+			}
+		};
+		function RetryClicked() {
+			socket.send("3");
+			content2.style.display = "block";
+			content3.style.display = "none";
+		};
+
+		socket.on('disconnect', function () {
+			ClientId = -1;
+		});
+
+
+
+	</script>
+
+</body>
+
+</html>
