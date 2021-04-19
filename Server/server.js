@@ -1,16 +1,22 @@
 require('dotenv').config();
 
-const server = require('http').createServer((req, res) => {
-	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Request-Method', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-	res.setHeader('Access-Control-Allow-Headers', '*');
-	if ( req.method === 'OPTIONS' ) {
-		res.writeHead(200);
-		res.end();
-		return;
+const http = require('http');
+
+// Handlers
+const cors = require('./handlers/corsHandler');
+const static = require('./handlers/staticHandler');
+const logging = require('./handlers/logging');
+
+// Server settings
+const server = http.createServer((req, res) => {
+	if (cors(req, res) !== 200) {
+		req.url.toLowerCase().indexOf('/server') !== 0 && req.method === 'GET' && static(req, res);
 	}
+
+	logging(req, res);
 });
+
+// Socket.io settings
 const io = require('socket.io')(server, {
 	path: "/server",
 	serveClient: false,

@@ -9,7 +9,8 @@
 **Environment variables**
 ```js
     NODE_ENV=development|production // Shows additional logs while 'development'
-    WS_PORT=1080 // Port where application will be started
+    WS_PORT=1080 // Port where application will be started (default: 1080)
+    STATIC_LOCATION=./static // Path to your static files (default: ./static)
 ```
 
 **Main server messages**

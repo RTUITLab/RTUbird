@@ -80,6 +80,8 @@ Server/node_modules
 WebClient/node_modules
 GameServer/node_modules
 
+Server/static
+
 nginx-1.18.0
 
 stack.yml

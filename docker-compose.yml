@@ -3,16 +3,3 @@ version: '3.8'
 services:
   server:
     image: rtuitlab/screen-cyberbird-server
-    networks:
-    - net
-  client:
-    image: rtuitlab/screen-cyberbird-client
-    networks:
-    - net
-  proxy:
-    image: rtuitlab/screen-cyberbird-proxy
-    networks:
-    - net
-networks:
-  net:
-    driver: overlay
