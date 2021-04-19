@@ -30,9 +30,13 @@ stages:
       inputs:
         versionSpec: '12.x'
       displayName: 'Install Node.js'
-    - script: npm install -g jake
-      displayName: 'Install Jake.js'
-    - script: jake
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          New-Item WebClient\.env
+          Set-Content WebClient\.env 'REACT_APP_URL=/'
+    - script: npx jake
     - task: CopyFiles@2
       inputs:
         SourceFolder: 'WebClient/build'
@@ -41,7 +45,8 @@ stages:
         CleanTargetFolder: true
     - publish: Server/deploy
       artifact: ${{ variables.server_artifactName }}
-- stage: Push Docker Image
+- stage:
+  displayName: Push Docker Image
   condition: and(succeeded(), ${{variables.buildImage}})
   jobs:
   - job: Build
