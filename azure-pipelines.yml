@@ -34,7 +34,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          New-Item WebClient\.env
+          New-Item WebClient\.env -Force
           Set-Content WebClient\.env 'REACT_APP_URL=/'
     - script: npx jake
     - task: CopyFiles@2
