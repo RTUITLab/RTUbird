@@ -1,7 +1,12 @@
 const fs = require('fs');
 
 const staticHandler = (req, res) => {
-    const filePath = (process.env.STATIC_LOCATION || './static') + req.url;
+    let filePath = __dirname + '/' + (process.env.STATIC_LOCATION || 'static') + req.url;
+
+    if (req.url === '/') {
+        filePath += 'index.html';
+    }
+
     try {
         fs.accessSync(filePath, fs.constants.R_OK);
         if(fs.lstatSync(filePath).isDirectory()){
