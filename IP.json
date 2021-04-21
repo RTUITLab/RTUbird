@@ -1,4 +1,4 @@
 {
 	"Serv_addr": "http://127.0.0.1:1082",
-	"Cli_addr": "http://127.0.0.1:1082"
+	"Cli_addr": "https://cyberbird.screen.rtuitlab.dev"
 }
