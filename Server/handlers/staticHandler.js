@@ -14,6 +14,10 @@ const staticHandler = (req, res) => {
             res.end("Resourse not found!");
         }
         else{
+            if (/\.(css)$/.test(filePath)) {
+                res.writeHead(200, {'Content-Type': 'text/css; charset=utf-8'});
+            }
+
             fs.createReadStream(filePath).pipe(res);
         }
     } catch (e) {
