@@ -91,5 +91,5 @@ stages:
                 inputs:
                   sshEndpoint: 'swarm manager'
                   runOptions: 'commands'
-                  commands: 'docker service update --image ${{ variables.server_imageName }}:$(Build.BuildId) ${{variables.server_serviceName}}'
+                  commands: 'docker service update --image ${{ variables.server_imageName }}:$(Build.BuildId) ${{variables.server_serviceName}} --with-registry-auth'
                   readyTimeout: '20000'
