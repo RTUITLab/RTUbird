@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GetSettings.h"
 #include <Runtime/Core/Public/Misc/Paths.h>
 #include <Runtime/Core/Public/HAL/PlatformFilemanager.h>
 #include <Runtime/Core/Public/Misc/FileHelper.h>
 #include "JsonObjectConverter.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 
 // Sets default values for this component's properties
@@ -60,6 +61,10 @@ FString UGetSettings::ReadFile(FString filename, FString key)
 				if (key == TEXT("Cli_addr")) {
 					UE_LOG(LogTemp, Warning, TEXT("Cli_addr: %s"), *SettingsJSON.Cli_addr);
 					return SettingsJSON.Cli_addr;
+				}
+				if (key == TEXT("NPath")) {
+					UE_LOG(LogTemp, Warning, TEXT("NPath: %s"), *SettingsJSON.NPath);
+					return SettingsJSON.NPath;
 				}
 
 			}

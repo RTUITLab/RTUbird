@@ -1,4 +1,5 @@
 {
-	"Serv_addr": "http://127.0.0.1:1082",
-	"Cli_addr": "https://cyberbird.screen.rtuitlab.dev"
+	"Serv_addr": "http://34.118.15.239",
+	"Cli_addr": "https://cyberbird.screen.rtuitlab.dev",
+	"NPath": "C:\\nginx-1.18.0"
 }
